@@ -117,7 +117,7 @@ in
 	    {Send GUI_port movePlayer(Player.id PosTemp)}
 
 
-	    if PosTemp \= surface then {List.forAll PortList proc {$ PortA} {Send PortA sayMove(Player.id DirTemp)}  end}
+	    if DirTemp \= surface then {List.forAll PortList proc {$ PortA} {Send PortA sayMove(Player.id DirTemp)}  end}
 
 
 	       %allow player to charge an Item
@@ -282,7 +282,7 @@ in
 		  if Message==false then if {Playturn H }==false then {LauchgameTurn {List.append T H|nil } PlayerLeft}
 					 else {LauchgameTurn T PlayerLeft-1}
 					 end
-		  else {Send GUI_port removePlayer(H.id)} {LauchgameTurn T PlayerLeft-1 }
+		  else  {LauchgameTurn T PlayerLeft-1 }
 		  end
 
 	       end
