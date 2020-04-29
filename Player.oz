@@ -4,7 +4,6 @@ import
    Browser(browse:Browse)
    Player at 'Player.ozf'
    OS
-   System
 export
    portPlayer:StartPlayer
 define
@@ -25,7 +24,7 @@ define
    SayPassingSonar
    SayDamageTaken
 
-   %fcts ajoutées
+   %Added functions 
    IsIsland
    Histo
    IsValidPath
@@ -348,8 +347,6 @@ in
     * Delete of the impossible position of the ennemy (identified by ID) after he moved
     */
    fun {SayMove ID Direction State}
-      {System.show saymovefunction}
-      {System.show ID}
       local SayMove2 in
 	 fun{SayMove2 L}
 	    case L of nil then nil
@@ -364,20 +361,6 @@ in
 	 {SayMove2 State.ID.potPos}
       end
    end
-
-   %à supprimer début ?
-   proc {SaySurface ID}
-      {System.show saySurface}
-   end
-
-   proc{SayCharge ID KindItem} % proc pcq on retourne rien?
-      {System.show sayCharge}
-   end
-
-   proc{SayMinePlaced ID}% proc pcq on retourne rien?
-      {System.show sayMinePlaced}
-   end
-   %à supprimer fin ?
 
    /*
     * Handle that the player identified has made a missile explode at the given position.
@@ -678,7 +661,7 @@ in
 	 fun {Secondfun State Acc}
 	    if Acc==State.id.id then {Secondfun State Acc+1}
 	    else
-	       if Acc>Input.nbPlayer then {System.show 'pas trouvé de cible , error'} null
+	       if Acc>Input.nbPlayer then null
 	       else
 		  if State.Acc.life > 0 then Acc
 		  else  {Secondfun State Acc+1}
@@ -723,164 +706,108 @@ in
 	 end
 
       [] dive|T then
-	 {System.show dive}
 	 local Newstate in
 	    Newstate={Record.adjoin State player(immersed:true)}
-	    {System.show plongeeSousMarine}
 	    {TreatStream T Newstate}
 	 end
 
       [] chargeItem(?ID ?KindItem)|T then
-	 {System.show chargeItem}
 	 ID=State.id
 	 local Newstate in
 	    Newstate={ChargeItem ?KindItem State}
-	    {System.show chargeItem2}
 	    {TreatStream T Newstate}
 	 end
 
       [] fireItem(?ID ?KindFire)|T then
-	 {System.show fireItem1}
 	 ID=State.id
 	 local Newstate in
 	    Newstate={FireItem {FindValidTarget State} ?KindFire  State}
-	    {System.show fire_done}
 	    {TreatStream T Newstate}
 	 end
-
       [] fireMine(?ID ?Mine)|T then
-	 {System.show fireMine}
 	 ID=State.id
 	 local Newstate in
 	    Newstate={FireMine ?Mine State}
-	    {System.show fireMine_done}
 	    {TreatStream T Newstate}
 	 end
-
       [] isDead(?Answer)|T then
-	 {System.show isDead}
 	 if State.life==0 then Answer=true
 	 else Answer=false
 	 end
-	 {System.show isDead2}
 	 {TreatStream T State}
-
       [] sayMove(ID Direction)|T then
-      {System.show ID.id}
-      {System.show State.id}
-      {System.show sayMove}
-      if ID.id==State.id.id then
-      {System.show queue}
-      {TreatStream T State}
-      else
-
-	 local Newstate Var in
-      Var=ID.id
-      {System.show itsthevar}
-      {System.show Var}
-	    Newstate={Record.adjoin State player(Var:id(potPos:{SayMove Var Direction State} life:State.Var.life))}
-	    {System.show saymooove_done}
-	    {TreatStream T Newstate}
-      end
+	 if ID.id==State.id.id then
+	    {TreatStream T State}
+	 else
+	    local Newstate Var in
+	       Var=ID.id
+	       Newstate={Record.adjoin State player(Var:id(potPos:{SayMove Var Direction State} life:State.Var.life))}
+	       {TreatStream T Newstate}
+	    end
 	 end
-
       [] saySurface(ID)|T then
-	 {System.show saySurface}
-	 {SaySurface ID}
 	 {TreatStream T State}
-
-      [] sayCharge(ID KindItem)|T then {SayCharge ID KindItem}
-	 {System.show sayCharge_done}
+      [] sayCharge(ID KindItem)|T then
 	 {TreatStream T State}
-
       [] sayMinePlaced(ID)|T then
-	 {System.show sayMinePlaced}
-	 {SayMinePlaced ID}
 	 {TreatStream T State}
-
       [] sayMissileExplode(ID Position ?Message)|T then %simon
-	 {System.show sayMissileExplode1}
 	 local Newstate in
 	    Newstate={SayMissileExplode ID.id Position Message State}
-      {System.show Message}
-	    {System.show missileecplosion}
-	    {TreatStream T Newstate}
-   end
-
-      [] sayMineExplode(ID Position ?Message)|T then %simon
-	 {System.show sayMineExplode1}
-	 local Newstate in
-	    Newstate={SayMineExplode ID.id Position Message State}
-	    {System.show sayMineExplode2}
-	    {TreatStream T Newstate}
-   end
-
-      [] sayAnswerDrone(Drone ID Answer)|T then
-      if ID.id==State.id.id then
-      {TreatStream T State}
-      else
-	 {System.show sayAnswerDrone1}
-	 local Newstate Var in
-      Var=ID.id
-	    Newstate={Record.adjoin State player(Var:id(potPos:{SayAnswerDrone Var Drone Answer State} life:State.Var.life))}
-	    {System.show benIsAGod}
-	    {System.show sayAnswerDrone2}
 	    {TreatStream T Newstate}
 	 end
-   end
+      [] sayMineExplode(ID Position ?Message)|T then %simon
+	 local Newstate in
+	    Newstate={SayMineExplode ID.id Position Message State}
+	    {TreatStream T Newstate}
+	 end
+
+      [] sayAnswerDrone(Drone ID Answer)|T then
+	 if ID.id==State.id.id then
+	    {TreatStream T State}
+	 else
+	    local Newstate Var in
+	       Var=ID.id
+	       Newstate={Record.adjoin State player(Var:id(potPos:{SayAnswerDrone Var Drone Answer State} life:State.Var.life))}
+	       {TreatStream T Newstate}
+	    end
+	 end
       [] sayPassingDrone(Drone ?ID ?Answer)|T then
-	 {System.show sayPassingDrone1}
 	 ID=State.id
 	 Answer={SayPassingDrone Drone State}
-	 {System.show sayPassingDrone2}
 	 {TreatStream T State}
 
       [] sayAnswerSonar(ID Answer)|T then
-      if ID.id==State.id.id then {TreatStream T State}
-      else
-	 {System.show sayAnswerSonar1}
-	 local Newstate Var in
-      Var=ID.id
-	    Newstate={Record.adjoin State player(Var:id(potPos:{RemoveSonar State.Var.potPos Answer.x Answer.y} life:State.Var.life))}
-	    {System.show sayAnswerSonar2}
-	    {TreatStream T Newstate}
+	 if ID.id==State.id.id then {TreatStream T State}
+	 else
+	    local Newstate Var in
+	       Var=ID.id
+	       Newstate={Record.adjoin State player(Var:id(potPos:{RemoveSonar State.Var.potPos Answer.x Answer.y} life:State.Var.life))}
+	       {TreatStream T Newstate}
+	    end
 	 end
-   end
       [] sayPassingSonar(?ID ?Answer)|T then
-	 {System.show sayPassingSonar1}
 	 ID=State.id
 	 Answer={SayPassingSonar State}
-	 {System.show sayPassingSonar2}
 	 {TreatStream T State}
-
       [] sayDeath(ID)|T then
-      if ID.id==State.id.id then {TreatStream T State}
-      else
-	 {System.show isLaMort1}
-	 local Newstate Var in
-      Var=ID.id
-	    Newstate={Record.adjoin State player(Var:id(potPos:State.Var.potPos life:0))}
-	    {System.show isLaMort2}
-	    {TreatStream T Newstate}
+	 if ID.id==State.id.id then {TreatStream T State}
+	 else
+	    local Newstate Var in
+	       Var=ID.id
+	       Newstate={Record.adjoin State player(Var:id(potPos:State.Var.potPos life:0))}
+	       {TreatStream T Newstate}
+	    end
 	 end
-   end
-
-      [] sayDamageTaken(ID Damage LifeLeft)|T then %dégats des ennemis seulement
-      if ID.id==State.id.id then {TreatStream T State}
-      else
-	 {System.show isLesDegats1}
-	 local Newstate Var in
-      Var=ID.id
-	    Newstate={Record.adjoin State player(Var:id(potPos:State.Var.potPos life:LifeLeft))}
-	    {System.show isLesDegats2}
-	    {TreatStream T Newstate}
+      [] sayDamageTaken(ID Damage LifeLeft)|T then
+	 if ID.id==State.id.id then {TreatStream T State}
+	 else
+	    local Newstate Var in
+	       Var=ID.id
+	       Newstate={Record.adjoin State player(Var:id(potPos:State.Var.potPos life:LifeLeft))}
+	       {TreatStream T Newstate}
+	    end
 	 end
-   end
-
-      else
-	 {System.show noMatchingInTreatStream}
-	 {System.show Stream}
-
       end
    end
 end

@@ -3,7 +3,6 @@ import
    Input at 'Input.ozf'
    Player at 'Player2.ozf'
    OS
-   System
 export
    portPlayer:StartPlayer
 define
@@ -18,7 +17,7 @@ define
    SayPassingDrone
    SayPassingSonar
 
-   %fcts ajoutées
+   %Added functions
    IsIsland
    Histo
    IsValidPath
@@ -30,8 +29,10 @@ define
    Where
    ValidItem
 in
-
-   fun{IsIsland L X Y} %testé et approuvé
+   /*
+    * IsIsland is use to know what is at pt(x:X y:Y) on the Input.map (equal to L)
+    */
+   fun{IsIsland L X Y}
       local IsIsland2 in
 	 fun{IsIsland2 M A}
 	    if A==1 then M.1
@@ -42,8 +43,10 @@ in
       end
    end
 
-   fun{Histo L E} %testé et approuvé
-      {System.show [onesthisto L E]}
+   /*
+    * Histo check if E is not in L (to know if we have already been at the position E in the State.path (L))
+    */
+   fun{Histo L E}
       case L of nil then true
       [] H|T then
 	 if H==E then false
@@ -52,18 +55,26 @@ in
       end
    end
 
-   fun{IsValidPath L E} %testé et approuvé
+   /*
+    * IsValidPath respond true if the position E is within the limits of the map, in the water and is not in the State.path (E)
+    */
+   fun{IsValidPath L E}
       local X Y in
 	 pt(x:X y:Y)=E
 	 (X >= 1 andthen X =< Input.nRow andthen Y >= 1 andthen Y =< Input.nColumn) andthen {IsIsland Input.map X Y} == 0 andthen {Histo L E}
       end
    end
 
+   /*
+    * Return a random number between 1 and N
+    */
    fun {Random N}
       {OS.rand} mod N + 1
    end
 
-   %Je suppose qu'il n'existe aucune colonne avec que des 1
+   /*
+    * Return a random position in the water
+    */
    fun{RandomPosition M}
       local X Y in
 	 X={Random Input.nRow}
@@ -74,12 +85,18 @@ in
       end
    end
 
+   /*
+    * Return the Nth élément in the list L
+    */
    fun {FindInList L N}
       if N==1 then L.1
       else {FindInList L.2 N-1}
       end
    end
 
+   /*
+    * Remove A from the list L
+    */
    fun{RemoveFromList L A}
       case L of nil then nil
       [] H|T then
@@ -89,21 +106,22 @@ in
       end
    end
 
-   %deal with false path also perfect place for intelligence while move is logisstic
+   /*
+    * choose a random Direction in the list L and check if the Direction is valid
+    * return the Position and Direction found
+    */
    fun {GetNewPos State L}
       if L==nil then nil
       else
 	 local CandPos CandDir PosDir in
-	    CandDir={FindInList L {Random {List.length L}}}
-             % pick at random a path
+	    CandDir={FindInList L {Random {List.length L}}} % pick at random a path
 	    case CandDir of east then CandPos=pt(x:State.pos.x y:State.pos.y+1)
 	    [] south then CandPos=pt(x:State.pos.x+1 y:State.pos.y)
 	    [] west then CandPos=pt(x:State.pos.x y:State.pos.y-1)
 	    [] north then CandPos=pt(x:State.pos.x-1 y:State.pos.y)
 	    end
-
             %check if pos is valid
-	    if ({IsValidPath State.path CandPos}==true) then       %isvalid surface bug?
+	    if ({IsValidPath State.path CandPos}==true) then
 	       PosDir=CandPos|CandDir
 	    else
 	       {GetNewPos State {RemoveFromList L CandDir}}
@@ -112,13 +130,14 @@ in
       end
    end
 
-   fun{SayMissileExplode ID Position ?Message State}%simon
-
+   /*
+    * Handle that the player identified has made a missile explode at the given position.
+    */
+   fun{SayMissileExplode ID Position ?Message State}
       if Position.y==State.pos.y andthen Position.x==State.pos.x then
 	 if (State.life < 3 )then
 	    Message=sayDeath(State.id)
 	    {Record.adjoin State player(life:State.life-State.life)}
-
 	 else
 	    Message=sayDamageTaken(State.id 2 State.life-2)
 	    {Record.adjoin State player(life:State.life-2)}
@@ -128,11 +147,9 @@ in
 	    if State.life < 2 then
 	       Message=sayDeath(State.id)
 	       {Record.adjoin State player(life:State.life-State.life)}
-
 	    else
 	       Message=sayDamageTaken(State.id 1 State.life-1)
 	       {Record.adjoin State player(life:State.life-1)}
-
 	    end
 	 else
 	    Message=sayDamageTaken(State.id 0 State.life)
@@ -141,6 +158,9 @@ in
       end
    end
 
+   /*
+    * Handle that the player identified has made a mine explode at the given position.
+    */
    fun{SayMineExplode ID Position ?Message State}%simon
       if Position.y==State.pos.y andthen Position.x==State.pos.x then
 	 if (State.life < 3 )then
@@ -163,10 +183,12 @@ in
 	    Message=sayDamageTaken(State.id 0 State.life)
 	    State
 	 end
-
       end
    end
 
+   /*
+    * Answer the question given in the drone
+    */
    fun{SayPassingDrone Drone State}
       case Drone of drone(row X) then
 	 if State.pos.x==X then true
@@ -180,6 +202,9 @@ in
       end
    end
 
+   /*
+    * Answer the question by giving a position with one coordinate right and the other wrong
+    */
    fun{SayPassingSonar State}
       local R in
 	 R={Random 2}
@@ -191,8 +216,10 @@ in
       end
    end
 
+   /*
+    * Move the player at a right position
+    */
    fun{Move ?Position ?Direction State}
-      {System.show [path State.path]}
       if(State.nbMove==1) then
 	 Direction=surface
 	 Position=State.pos
@@ -213,7 +240,9 @@ in
       end
    end
 
-
+   /*
+    * Charge : 1)sonar, 2)drone and 3)missiles (until the death of the ennemies) => we check the case 1 2 3 via the variable item
+    */
    fun{ChargeItem ?KindItem State}
       local PosItem ChargeItem2 in
 	 fun{ChargeItem2 TempItem}
@@ -255,7 +284,9 @@ in
       end
    end
 
-   %choisis quelle item a launch , coder IA ici et fireItem fait la logistique
+   /*
+    * Choose wich item to lauch (which one is valid)
+    */
    fun {ValidItem ListFire State}
       if ListFire==nil then nil
       else
@@ -265,49 +296,44 @@ in
 	    else
 	       {ValidItem ListFire.2 State}
 	    end
-
 	 [] missile then
 	    if State.numberMissile>0 then
 	       missile|{ValidItem ListFire.2 State}
 	    else
 	       {ValidItem ListFire.2 State}
 	    end
-
 	 [] drone then
 	    if State.numberDrone>0 then
 	       drone|{ValidItem ListFire.2 State}
 	    else
 	       {ValidItem ListFire.2 State}
 	    end
-
 	 [] sonar then
 	    if State.numberSonar>0 then
 	       sonar|{ValidItem ListFire.2 State}
-
 	    else
 	       {ValidItem ListFire.2 State}
 	    end
 	 [] rien then rien|{ValidItem ListFire.2 State}
-
 	 end
       end
    end
 
-   fun{FireItem ?KindFire State} % Listfire étrange? version smart buggé donc remplacé par tout con , peut etre trouvée au commit updateplayer du 20/4
+   /*
+    * Fire the item
+    */
+   fun{FireItem ?KindFire State}
       local Fire in
 	 Fire={ValidItem [missile sonar drone mine rien]  State}.1
 	 case Fire of mine then
 	    KindFire=mine(State.pos)
 	    {Record.adjoin State player(listMine:KindFire|State.listMine numberMine:State.numberMine-1)}
-
 	 [] missile then
 	    KindFire=missile({RandomPosition Input.map})
 	    {Record.adjoin State player(numberMissile:State.numberMissile-1)}
-
 	 [] drone then
-	    KindFire=drone(row:{Random Input.nRow}) % nrow bugged? remplaced by 8 for the time being
+	    KindFire=drone(row:{Random Input.nRow})
 	    {Record.adjoin State player(numberDrone:State.numberDrone-1)}
-
 	 [] sonar then
 	    KindFire=sonar
 	    {Record.adjoin State player(numberSonar:State.numberSonar-1)}
@@ -316,9 +342,11 @@ in
 	    State
 	 end
       end
-
    end
 
+   /*
+    * Fire the first mine of the list listMine
+    */
    fun{FireMine ?Mine State}
       if State.listMine==nil then
 	 Mine=null
@@ -329,154 +357,110 @@ in
       end
    end
 
-
    fun{StartPlayer Color ID}
       Stream
       Port
       PlayerState
    in
-      {System.show bite}
-      %immersed pour savoir si il est en surface ou pas
-      PlayerState = player(id:id(id:ID color:Color name:fishy) path:nil nbMove:6 pos:nil immersed:false life:Input.maxDamage listMine:nil loadMine:0 numberMine:0 loadMissile:0 numberMissile:0 loadDrone:0 numberDrone:0 loadSonar:0 numberSonar:0)
+      PlayerState = player(id:id(id:ID color:Color name:randomIA) path:nil nbMove:6 pos:nil immersed:false life:Input.maxDamage listMine:nil loadMine:0 numberMine:0 loadMissile:0 numberMissile:0 loadDrone:0 numberDrone:0 loadSonar:0 numberSonar:0)
       {NewPort Stream Port}
       thread
-	 {System.show start_playfdp}
 	 {TreatStream Stream PlayerState}
       end
       Port
    end
 
    proc {TreatStream Stream State}
-      {System.show state}
-      {System.show [historik State.path]}
-
       case Stream of nil then skip
       [] initPosition(?ID ?Position)|T then
-	 {System.show initPosition1}
 	 ID=State.id
 	 Position={RandomPosition Input.map}
 	 local Newstate in
 	    Newstate={Record.adjoin State player(pos:Position path:Position|nil)}
-	    {System.show initPosition2}
 	    {TreatStream T Newstate}
 	 end
 
       [] move(ID ?Position ?Direction)|T then
-	 {System.show onestdansmove}
 	 ID=State.id
 	 local Newstate in
 	    Newstate={Move ?Position ?Direction State}
-      {System.show [direction Direction]}
-	    {System.show mooove}
 	    {TreatStream T Newstate}
 	 end
 
       [] dive|T then
-	 {System.show dive}
 	 local Newstate in
 	    Newstate={Record.adjoin State player(immersed:true)}
-	    {System.show plongeeSousMarine}
 	    {TreatStream T Newstate}
 	 end
 
       [] chargeItem(?ID ?KindItem)|T then
-	 {System.show chargeItem}
 	 ID=State.id
 	 local Newstate in
 	    Newstate={ChargeItem ?KindItem State}
-	    {System.show chargeItem2}
 	    {TreatStream T Newstate}
 	 end
 
       [] fireItem(?ID ?KindFire)|T then
-	 {System.show fireItem1}
 	 ID=State.id
 	 local Newstate in
 	    Newstate={FireItem ?KindFire  State}
-	    {System.show fire_done}
 	    {TreatStream T Newstate}
 	 end
 
       [] fireMine(?ID ?Mine)|T then
-	 {System.show fireMine}
 	 ID=State.id
 	 local Newstate in
 	    Newstate={FireMine ?Mine State}
-	    {System.show fireMine_done}
 	    {TreatStream T Newstate}
 	 end
 
       [] isDead(?Answer)|T then
-	 {System.show isDead}
 	 if State.life==0 then Answer=true
 	 else Answer=false
 	 end
-	 {System.show isDead2}
 	 {TreatStream T State}
 
       [] sayMove(ID Direction)|T then
-	 {System.show sayMove}
 	 {TreatStream T State}
-	 {System.show saymooove_done}
 
       [] saySurface(ID)|T then
-	 {System.show saySurface}
 	 {TreatStream T State}
 
       [] sayCharge(ID KindItem)|T then
-	 {System.show sayCharge_done}
 	 {TreatStream T State}
 
       [] sayMinePlaced(ID)|T then
-	 {System.show sayMinePlaced}
 	 {TreatStream T State}
 
       [] sayMissileExplode(ID Position ?Message)|T then %simon
-	 {System.show sayMissileExplode1}
 	 local Newstate in
 	    Newstate={SayMissileExplode ID.id Position Message State}
-	    {System.show Message}
-	    {System.show missileecplosion}
 	    {TreatStream T Newstate}
 	 end
 
       [] sayMineExplode(ID Position ?Message)|T then %simon
-	 {System.show sayMineExplode1}
 	 local Newstate in
 	    Newstate={SayMineExplode ID.id Position Message State}
-	    {System.show sayMineExplode2}
 	    {TreatStream T Newstate}
 	 end
 
       [] sayAnswerDrone(Drone ID Answer)|T then
 	 {TreatStream T State}
       [] sayPassingDrone(Drone ?ID ?Answer)|T then
-	 {System.show sayPassingDrone1}
 	 ID=State.id
 	 Answer={SayPassingDrone Drone State}
-	 {System.show sayPassingDrone2}
 	 {TreatStream T State}
 
       [] sayAnswerSonar(ID Answer)|T then
-	 {System.show sayAnswerSonar2}
 	 {TreatStream T State}
       [] sayPassingSonar(?ID ?Answer)|T then
-	 {System.show sayPassingSonar1}
 	 ID=State.id
 	 Answer={SayPassingSonar State}
-	 {System.show sayPassingSonar2}
 	 {TreatStream T State}
-
       [] sayDeath(ID)|T then
 	 {TreatStream T State}
-
-      [] sayDamageTaken(ID Damage LifeLeft)|T then %dégats des ennemis seulement
+      [] sayDamageTaken(ID Damage LifeLeft)|T then
 	 {TreatStream T State}
-
-      else
-	 {System.show noMatchingInTreatStream}
-	 {System.show Stream}
-
       end
    end
 end
