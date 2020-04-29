@@ -1,7 +1,5 @@
-Basic project/*.ozf
+*.ozf
 
-Basic project/GUI.ozf
-
-Basic project/ish.oz
+ish.oz
 
 .DS_Store
