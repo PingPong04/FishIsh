@@ -1,7 +1,7 @@
 functor
 import
    Input at 'Input.ozf'
-   Player at 'Player.ozf'
+   Player at 'Player2.ozf'
    OS
    System
 export
@@ -43,6 +43,7 @@ in
    end
 
    fun{Histo L E} %testé et approuvé
+      {System.show [histo L]}
       case L of nil then true
       [] H|T then
 	 if H==E then false
@@ -103,8 +104,10 @@ in
 
             %check if pos is valid
 	    if ({IsValidPath State.path CandPos}==true) then       %isvalid surface bug?
+         {System.show itstrue}
 	       PosDir=CandPos|CandDir
 	    else
+          {System.show itsfalse}
 	       {GetNewPos State {RemoveFromList L CandDir}}
 	    end
 	 end
@@ -191,6 +194,7 @@ in
    end
 
    fun{Move ?Position ?Direction State}
+      {System.show [path State.path]}
       if(State.nbMove==1) then
 	 Direction=surface
 	 Position=State.pos
