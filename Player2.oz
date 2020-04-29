@@ -43,7 +43,7 @@ in
    end
 
    fun{Histo L E} %testé et approuvé
-      {System.show [histo L]}
+      {System.show [onesthisto L E]}
       case L of nil then true
       [] H|T then
 	 if H==E then false
@@ -104,10 +104,8 @@ in
 
             %check if pos is valid
 	    if ({IsValidPath State.path CandPos}==true) then       %isvalid surface bug?
-         {System.show itstrue}
 	       PosDir=CandPos|CandDir
 	    else
-          {System.show itsfalse}
 	       {GetNewPos State {RemoveFromList L CandDir}}
 	    end
 	 end
@@ -198,14 +196,14 @@ in
       if(State.nbMove==1) then
 	 Direction=surface
 	 Position=State.pos
-	 {Record.adjoin State player(nbMove:6 immersed:false path:nil)}
+	 {Record.adjoin State player(nbMove:6 immersed:false path:Position|nil)}
       else
 	 local ListPosDir in
 	    ListPosDir =  {GetNewPos State [east north west south]}
 	    if ListPosDir==nil then
 	       Direction=surface
 	       Position=State.pos
-	       {Record.adjoin State player(nbMove:6 immersed:false path:nil)}
+	       {Record.adjoin State player(nbMove:6 immersed:false path:Position|nil)}
 	    else
 	       Position=ListPosDir.1
 	       Direction=ListPosDir.2
@@ -350,7 +348,7 @@ in
 
    proc {TreatStream Stream State}
       {System.show state}
-      {System.show [State.id.id State.life State.immersed]}
+      {System.show [historik State.path]}
 
       case Stream of nil then skip
       [] initPosition(?ID ?Position)|T then

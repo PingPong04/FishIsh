@@ -448,14 +448,14 @@ in
       if(State.nbMove==1) then
     Direction=surface
 	 Position=State.pos
-	 {Record.adjoin State player(n:1 nbMove:5 immersed:false path:nil dir:nil dir2:{InverseList State.dir})}
+	 {Record.adjoin State player(n:1 nbMove:5 immersed:false path:Position|nil dir:nil dir2:{InverseList State.dir})}
       elseif(State.n==0) then
 	 local ListPosDir in
 	    ListPosDir =  {GetNewPos State [east north west south]}
 	    if ListPosDir==nil then
           Direction=surface
           Position=State.pos
-	       {Record.adjoin State player(n:0 nbMove:5 immersed:false path:nil dir:nil)}
+	       {Record.adjoin State player(n:0 nbMove:5 immersed:false path:Position|nil dir:nil)}
 	    else
 	    Position=ListPosDir.1
 	    Direction=ListPosDir.2
@@ -645,7 +645,7 @@ end
 
    proc {TreatStream Stream State}
       {System.show state}
-      {System.show [State.id.id State.life State.immersed]}
+      {System.show [historikarrr {Histo State.path State.pos}]}
 
       case Stream of nil then skip
       [] initPosition(?ID ?Position)|T then
