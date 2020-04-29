@@ -32,7 +32,7 @@ in
 
 
    proc {CreatePlayer}
-      local TempList Secondfun  Guifun IDtemp Positiontemp in
+      local Secondfun IDtemp Positiontemp in
 
 	 fun {Secondfun IDNum PlayerInput ColorInput}
 	    if IDNum > Input.nbPlayer then nil
@@ -44,7 +44,6 @@ in
 	 end
 
 	 fun {Thirdfun TempPortList}
-	    {System.show bitroooo}
 	    local Positiontemp IDtemp in
 	       case TempPortList
 	       of H|T then
@@ -79,7 +78,7 @@ in
 
 					%placed func here so can use State
 	 proc {ExplosionMissile Target}
-	    local MessageMissile Death ID LifeLeft Damage in
+	    local MessageMissile in
 	       {Send  Target sayMissileExplode(Player.id PosMissile MessageMissile)}
          {System.show waitingMessageExplosion}
 	       {Wait MessageMissile}
@@ -171,7 +170,7 @@ in
 
 
    proc {SimultaneousGame Player}
-      local OneTurn DirTemp PosTemp ItemTemp FireTemp MineTemp ExplosionMine MessageDeath IdTarget PosTarget MessageMine PosMissile PosMine ExplosionMissile Death in
+      local OneTurn DirTemp PosTemp ItemTemp FireTemp MineTemp ExplosionMine Death PosMissile PosMine ExplosionMissile  in
 
 	 proc {OneTurn PlaceHolder}
             %Take a port in argument and broadcast his response to an missile explosion
@@ -316,7 +315,9 @@ in
    end
 end
 
-%deal with endgame simul
+%verifier ordre fireItem
+%Changer path nil player
+%remettre le bon StimulateThinking
 
 
 

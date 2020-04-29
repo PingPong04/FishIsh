@@ -633,7 +633,7 @@ end
    in
       {System.show bite}
       %immersed pour savoir si il est en surface ou pas
-      PlayerState = player(id:id(id:ID color:Color name:fishy) item:0 path:nil dir:nil n:0 dir2:nil nbMove:5 pos:nil immersed:false life:Input.maxDamage listMine:nil loadMine:0 numberMine:0 listMissile:nil loadMissile:0 numberMissile:0 loadDrone:0 numberDrone:0 loadSonar:0 numberSonar:0)
+      PlayerState = player(id:id(id:ID color:Color name:fishy) item:0 path:nil dir:nil n:0 dir2:nil nbMove:5 pos:nil immersed:false life:Input.maxDamage listMine:nil loadMine:0 numberMine:0 loadMissile:0 numberMissile:0 loadDrone:0 numberDrone:0 loadSonar:0 numberSonar:0)
       {NewPort Stream Port}
       Newstate={CreatePlayer Input.nbPlayer PlayerState}
       thread
