@@ -47,7 +47,6 @@ define
    CreatePlayer
    InverseList
    FindValidTarget
-   Bite%a enlever
 in
 
    fun{IsIsland L X Y} %testé et approuvé
@@ -409,18 +408,14 @@ in
    fun{SayAnswerDrone ID Drone Answer State}
       case Drone of drone(row X) then
 	 if Answer==false then
-	    {System.show sayanswerdrone1}
 	    {RemoveDrone State.ID.potPos X 2}
 	 else
-	    {System.show sayanswerdrone3}
 	    {RemoveDrone State.ID.potPos X 1}
 	 end
       [] drone(column Y) then
 	 if Answer==false then
-	    {System.show sayanswerdrone2}
 	    {RemoveDrone State.ID.potPos Y 4}
 	 else
-	    {System.show sayanswerdrone4}
 	    {RemoveDrone State.ID.potPos Y 3}
 	 end
       end
@@ -450,7 +445,6 @@ in
    end
 
    fun{Move ?Position ?Direction State}
-      {System.show newmove}
       if(State.nbMove==1) then
     Direction=surface
 	 Position=State.pos
@@ -483,11 +477,8 @@ end
    end
 
    fun{ChargeItem ?KindItem State}
-      {System.show chargeitem}
-      {System.show State.item}
       local PosItem ChargeItem2 in
 	 fun{ChargeItem2 TempItem}
-	    {System.show TempItem}
 	    case TempItem of mine then
 	       if State.loadMine+1==Input.mine then
 		  KindItem=mine
@@ -534,8 +525,6 @@ end
 
    %choisis quelle item a launch , coder IA ici et fireItem fait la logistique
    fun {ValidItem ListFire State}
-   {System.show validitem}
-   {System.show ListFire}
       if ListFire==nil then nil
       else
 	 case ListFire.1 of mine then
@@ -575,8 +564,6 @@ end
    fun{FireItem ID ?KindFire State} % Listfire étrange? version smart buggé donc remplacé par tout con , peut etre trouvée au commit updateplayer du 20/4
       local Fire in
 	 Fire={ValidItem [sonar drone missile mine rien]  State}.1
-	 {System.show youBurnWithUs}
-	 {System.show Fire}
 	 case Fire of mine then
 	    KindFire=mine(State.pos)
 	    {Record.adjoin State player(listMine:KindFire|State.listMine numberMine:State.numberMine-1)}
@@ -601,30 +588,21 @@ end
    end
 
    fun{FireMine ?Mine State}
-      {System.show firemine}
-      {System.show State.listMine}
       if State.listMine==nil then
 	 Mine=null
 	 State
       else
-	 {System.show fireMine2}
 	 Mine=State.listMine.1.1 %first object first argument (which is position)
 	 {Record.adjoin State player(listMine:{RemoveFromList State.listMine State.listMine.1})}
       end
    end
 
    fun {CreatePlayer T State} %T est remplacé par Input.nbPlayer
-      {System.show t}
-      {System.show T}
-      {System.show state}
-      {System.show State}
       if T==0 then State
       elseif (T==State.id.id) then {CreatePlayer T-1 State}
       else
         local Newstate in
           Newstate={Record.adjoin State player(T:id(potPos:{TournerMap 1} life:Input.maxDamage))}
-          {System.show newstate}
-          {System.show Newstate}
           {CreatePlayer T-1 Newstate}
           end
       end
@@ -666,11 +644,8 @@ end
    end
 
    proc {TreatStream Stream State}
-      {System.show stream}
-      {System.show Stream}
-
       {System.show state}
-      {System.show State}
+      {System.show [State.id.id State.life State.immersed]}
 
       case Stream of nil then skip
       [] initPosition(?ID ?Position)|T then
@@ -732,7 +707,7 @@ end
 	 if State.life==0 then Answer=true
 	 else Answer=false
 	 end
-	 {System.show Answer}
+	 {System.show isDead2}
 	 {TreatStream T State}
 
       [] sayMove(ID Direction)|T then

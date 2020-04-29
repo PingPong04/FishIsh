@@ -30,5 +30,9 @@ player:
 
 	/Applications/Mozart2.app/Contents/Resources/bin/ozengine  main.ozf
 
+player2:
+	/Applications/Mozart2.app/Contents/Resources/bin/ozc -c Player2.oz
+	/Applications/Mozart2.app/Contents/Resources/bin/ozengine  main.ozf
+
 
 #To make the whole project working, first compile the Input.oz file, PlayerManager.oz file, players files,GUI.oz and Main.oz. Then execute the created functor file Main.ozf.
