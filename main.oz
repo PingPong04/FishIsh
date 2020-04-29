@@ -269,7 +269,7 @@ in
    %Launch game in turn by turn
    proc {LauchgameTurn  AliveList PlayerLeft}
 %PlayerLeft < 2
-      if PlayerLeft<1 then {System.show wiiinnneeerr}  {System.show AliveList} {System.show PlayerLeft} %{List.forAll AliveList proc{$ A} local Mes in{Send A.port isDead(Mes)}{Wait Mes}{System.show Mes} end end }
+      if PlayerLeft<2 then {System.show wiiinnneeerr}  {System.show AliveList} {System.show PlayerLeft} %{List.forAll AliveList proc{$ A} local Mes in{Send A.port isDead(Mes)}{Wait Mes}{System.show Mes} end end }
 
       else
 	 local Message in

@@ -361,7 +361,7 @@ in
 
 	    end
 	 else
-      Message=null
+      Message=sayDamageTaken(State.id 0 State.life)
 	    State
 	 end
       end
@@ -386,7 +386,7 @@ in
 	       {Record.adjoin State player(life:State.life-1)}
 	    end
 	 else
-   Message=null
+   Message=sayDamageTaken(State.id 0 State.life)
    State
 	 end
 
@@ -828,6 +828,7 @@ end
       else
 	 {System.show isLaMort1}
 	 local Newstate Var in
+      Var=ID.id
 	    Newstate={Record.adjoin State player(Var:id(potPos:State.Var.potPos life:0))}
 	    {System.show isLaMort2}
 	    {TreatStream T Newstate}
@@ -840,7 +841,7 @@ end
 	 {System.show isLesDegats1}
 	 local Newstate Var in
       Var=ID.id
-	    Newstate={Record.adjoin State player(Var:id(potPos:State.Var.posPot life:LifeLeft))}
+	    Newstate={Record.adjoin State player(Var:id(potPos:State.Var.potPos life:LifeLeft))}
 	    {System.show isLesDegats2}
 	    {TreatStream T Newstate}
 	 end
